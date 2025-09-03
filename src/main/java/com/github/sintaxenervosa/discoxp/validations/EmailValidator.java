@@ -16,7 +16,10 @@ public interface EmailValidator {
            throw new IllegalAccessException("Formato de e-mail inválido");
        }
 
-       if(getUserRepository().existsByEmail(email)){
+    }
+
+    default void validateForCadastro(String email) throws IllegalAccessException{
+         if(getUserRepository().existsByEmail(email)){
            throw new IllegalAccessException("E-mail já cadastrado");
        }
     }

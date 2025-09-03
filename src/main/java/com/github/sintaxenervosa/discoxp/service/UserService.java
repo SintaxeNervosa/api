@@ -3,6 +3,7 @@ package com.github.sintaxenervosa.discoxp.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.github.sintaxenervosa.discoxp.dto.LoginRequestDto;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
     private final LoginValidator loginValidator;
+    private final PasswordEncoder passwordEncoder;
 
     public Optional<LoginResponseDto> login(LoginRequestDto loginRequest) throws IllegalAccessException{
         Optional<User> user = userRepository.findByEmail(loginRequest.email());
@@ -27,10 +29,10 @@ public class UserService {
 
         User usuario = user.get();
 
-        //      if (!passwordEncoder.matches(loginRequest.password(), usuario.getPassword())) {
-        //     return Optional.empty(); Depois uso o passwordEncoder
-        // }
-
+         if (!passwordEncoder.matches(loginRequest.password(), usuario.getPassword())) {
+            return Optional.empty();
+        }
+        
         loginValidator.validate(usuario);
 
        return Optional.of(LoginResponseDto.fromEntity(usuario)); 
